@@ -14,13 +14,13 @@ import javax.swing.JFrame;
 public class Sorting {
 
     /** Increment to sweep the sort. */
-    private static final int SORT_INCREMENT = 10000;
+    private static final int SORT_INCREMENT = 1;
 
     /** Total number of values to try. */
     private static final int TOTAL_SORT_VALUES = 100;
 
     /** Total data size. */
-    private static final int TOTAL_INTEGER_VALUES = 1000000;
+    private static final int TOTAL_INTEGER_VALUES = 10000;
 
     /**
      * Bubble sort.
@@ -29,9 +29,26 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] bubbleSort(final int[] array) {
-        return null;
+        for (int i = 0; i < array.length - 1; i++) {
+            for (int j = 1; j < array.length - i; j++) {
+                if (array[j - 1] > array[j]) {
+                    swap(array, j - 1, j);
+                }
+            }
+        }
+        return array;
     }
-
+    /**
+     * helper function that swaps two ints in a array given the array and the indexes.
+     * @param array - the array which contains the swapping targets
+     * @param a - one of the target to be swapped
+     * @param b - the second of the target to be swapped
+     */
+    static void swap(final int[] array, final int a, final int b) {
+        int temp = array[a];
+        array[a] = array[b];
+        array[b] = temp;
+    }
     /**
      * Selection sort.
      *
@@ -39,8 +56,44 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] selectionSort(final int[] array) {
-        return null;
+        if (array.length <= 0) {
+            return null;
+        }
+        return selectionHelper(array, 0, array.length - 1);
     }
+    /**
+     * Helper for selection sort.
+     * @param array the unsorted array
+     * @param low the lower bound
+     * @param hi the higher bound
+     * @return sorted array
+     */
+    static int[] selectionHelper(final int[] array, final int low, final int hi) {
+        if (low == hi) {
+            return array;
+        }
+        int min = findMin(array, low, hi);
+        swap(array, low, min);
+        return selectionHelper(array, low + 1, hi);
+    }
+
+    /**
+     * helper function to find the index of min between indicated indexes.
+     * @param arr - the entire array
+     * @param low - the lowest bound for which to search, inclusive
+     * @param hi - the highest bound for which to search, inclusive
+     * @return the minimum between hi and low
+     */
+    static int findMin(final int[] arr, final int low, final int hi) {
+        int min = low;
+        for (int i = low + 1; i <= hi; i++) {
+            if (arr[i] < arr[min]) {
+                min = i;
+            }
+        }
+        return min;
+    }
+
 
     /**
      * Merge sort.
@@ -49,7 +102,22 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] mergeSort(final int[] array) {
-        return null;
+        if (array.length <= 0) {
+            return null;
+        } else if (array.length == 1) {
+            return array;
+        }
+        int mid = array.length / 2;
+        int[] left = new int[mid];
+        int[] right = new int[array.length - mid];
+        for (int i = 0; i < left.length; i++) {
+            left[i] = array[i];
+        }
+        for (int j = 0; j < right.length; j++) {
+            right[j] = array[mid + j];
+        }
+
+        return merge(mergeSort(left), mergeSort(right));
     }
 
     /**
@@ -58,28 +126,24 @@ public class Sorting {
      * Implement an in place merge algorithm that repeatedly picks the smaller of two numbers from
      * "right" and "left" subarray and copies it to the "arr" array to produce a bigger sorted array
      *
-     * @param arr array contains sorted subarrays, should contain the resulting merged sorted array
-     * @param l start position of sorted left subarray
-     * @param m ending position of sorted left and start position of sorted right subarray
-     * @param r ending position of sorted right subarray
+     * @param arr1 array contains sorted subarrays, should contain the resulting merged sorted array
+     * @param arr2 start position of sorted left subarray
      * @return the sorted array, or null on failure
      */
-    static int[] merge(final int[] arr, final int l, final int m, final int r) {
-        int n1 = m - l + 1;
-        int n2 = r - m;
-
-        int[] left = new int[n1];
-        int[] right = new int[n2];
-
-        for (int i = 0; i < n1; ++i) {
-            left[i] = arr[l + i];
+    static int[] merge(final int[] arr1, final int[] arr2) {
+        int i = 0;
+        int j = 0;
+        int[] output = new int[arr1.length + arr2.length];
+        for (int k = 0; k < (arr1.length + arr2.length); k++) {
+            if (i < arr1.length && (j >= arr2.length || arr1[i] <= arr2[j])) {
+                output[k] = arr1[i];
+                i++;
+            } else {
+                output[k] = arr2[j];
+                j++;
+            }
         }
-        for (int j = 0; j < n2; ++j) {
-            right[j] = arr[m + 1 + j];
-        }
-
-        /* TO DO: Merge left and right array here */
-        return arr;
+        return output;
     }
 
     /**
